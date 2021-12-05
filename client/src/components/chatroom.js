@@ -13,6 +13,8 @@ export class ChatRoom extends React.Component {
     };
   }
 
+  messagesEndRef = React.createRef();
+
   componentDidMount() {
     const { socket, setSocket } = this.props;
     socket.on('connect', () => {
@@ -30,20 +32,24 @@ export class ChatRoom extends React.Component {
     });
   }
 
+  componentDidUpdate() {
+    const scroll =  this.messagesEndRef.current.scrollHeight -  this.messagesEndRef.current.clientHeight;
+    this.messagesEndRef.current.scrollTo(0, scroll);
+  }
+
   submitMessage(message) {
     this.props.socket.emit('message', { message })
     this.setState({ messages: [...this.state.messages, { username: this.props.username, message }]});
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className='chat-container'>
-        <div className='messages-list'>
-          <p>{this.state.connected ? 'Connected to' : 'Disconnected from'} {this.props.roomname}</p>
+        <div ref={this.messagesEndRef} className='messages-list'>
+          <p className='socket-status'>{this.state.connected ? 'Connected to' : 'Disconnected from'} {this.props.roomname}</p>
           { this.state.messages.map((message, key) => <Message key={key} username={message.username} message={message.message}/>) }
         </div>
-        <ChatInput socket={this.props.socket} submitMessage={(message) => this.submitMessage(message)}/>
+        <ChatInput submitMessage={(message) => this.submitMessage(message)}/>
       </div>
     )
   }
