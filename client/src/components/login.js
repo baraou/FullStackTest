@@ -1,12 +1,13 @@
-import { init } from "../api/sockets";
-
-const { useState } = require("react");
+import { init } from "../service/sockets";
 
 export const Login = (props) => {
-  console.log(props);
-  const { setSocket } = props;
-  const [username, setUsername] = useState('');
-  const [roomname, setRoomname] = useState('');
+  const {
+    setSocket,
+    username,
+    roomname,
+    setRoomname,
+    setUsername
+  } = props;
 
   return (
     <div>
