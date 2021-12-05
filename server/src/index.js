@@ -11,17 +11,27 @@ const io = require('socket.io')(server, {
   }
 });
 
+io.use((socket, next) => {
+  if (socket.handshake.query && socket.handshake.query.username && socket.handshake.query.room) {
+    socket.username = socket.handshake.query.username;
+    socket.room = socket.handshake.query.room;
+    next();
+  } else {
+    return next(new Error('Authentication error'))
+  }
+})
+
 io.on('connection', (socket) => {
   const socketId = socket.id;
   console.log('connected : ', socketId);
 
-  if (socket.handshake.query) {
-    console.log('joined room default chat');
-    socket.join('defaultChat');
-  }
+  console.log('joined room ', socket.room);
+  socket.join(socket.room);
 
   socket.on('message', data => {
-    console.log(`message sent from ${socketId} to ${data.room}`);
+    console.log(data);
+    console.log(`message sent from ${socket.username} to ${socket.room}`);
+    socket.to(socket.room).emit('message', { username: socket.username, message: data.message });
   });
 
   socket.on('disconnect', () => console.log('disconnected : ', socketId));
