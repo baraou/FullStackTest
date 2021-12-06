@@ -23,13 +23,10 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   const socketId = socket.id;
-  console.log('connected : ', socketId);
-
-  console.log('joined room ', socket.room);
   socket.join(socket.room);
+  console.log(socket.username, ' joined room ', socket.room);
 
   socket.on('message', data => {
-    console.log(data);
     console.log(`message sent from ${socket.username} to ${socket.room}`);
     socket.to(socket.room).emit('message', { username: socket.username, message: data.message });
   });

@@ -7,13 +7,5 @@ export function init(username, room) {
       room,
     },
   });
-
-  socket.on('connect', () => {
-    console.log('connected', socket.id);
-  });
-  socket.on('connect_error', () => {
-    console.log('connect error');
-  });
-  socket.on('disconnect', () => console.log('disconnected'));
   return socket;
 }
